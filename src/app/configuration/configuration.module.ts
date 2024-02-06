@@ -6,17 +6,12 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    component: ConfigurationComponent
-  }
+    component: ConfigurationComponent,
+  },
 ];
 
 @NgModule({
-  declarations: [
-    ConfigurationComponent,
-  ],
-  imports: [
-    CommonModule,
-    RouterModule.forChild(routes),
-  ]
+  declarations: [ConfigurationComponent],
+  imports: [CommonModule, RouterModule.forChild(routes)],
 })
-export class ConfigurationModule { }
+export class ConfigurationModule {}
