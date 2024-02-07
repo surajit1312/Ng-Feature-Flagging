@@ -1,5 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
-@import "~@angular/material/prebuilt-themes/purple-green.css";
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
 html,
 body {
@@ -19,4 +19,46 @@ div.banner {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+div.tab-content {
+  min-height: 16rem;
+  border: 1px solid #d4d4d4;
+  text-align: center;
+  font-size: x-large;
+  position: relative;
+}
+
+div.tab-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+div.table-container {
+  margin: 5rem;
+}
+
+.demo-table {
+  width: 100%;
+}
+
+.mat-mdc-row .mat-mdc-cell {
+  border-bottom: 1px solid transparent;
+  border-top: 1px solid transparent;
+  cursor: pointer;
+}
+
+.mat-mdc-row:hover .mat-mdc-cell {
+  border-color: currentColor;
+}
+
+.demo-row-is-clicked {
+  font-weight: bold;
+}
+
+mat-expansion-panel-header,
+mat-expansion-panel-header:hover {
+  background-color: #d4d4d4;
 }

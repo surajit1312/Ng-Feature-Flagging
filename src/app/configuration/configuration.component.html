@@ -1,1 +1,55 @@
-<div class="banner">Configuration Page</div>
+<div class="table-container">
+  <mat-accordion color="primary">
+    <mat-expansion-panel
+      (opened)="panelOpenState = true"
+      (closed)="panelOpenState = false"
+      *ngFor="let feature of features"
+    >
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <div class="panel-title">
+            <span class="panel-key">
+              {{ feature?.key }}
+            </span>
+            <span class="panel-value">
+              Default Value
+              <mat-slide-toggle
+                class="example-margin"
+                [color]="'blue'"
+                [checked]="feature.defaultValue"
+                [disabled]="false"
+              >
+              </mat-slide-toggle>
+            </span>
+          </div>
+        </mat-panel-title>
+        <mat-panel-description> </mat-panel-description>
+      </mat-expansion-panel-header>
+      <ul class="list-rules">
+        <li *ngFor="let rule of feature.rules; index as i">
+          <div>
+            <div class="panel-key">
+              Rule {{ i + 1 }}:
+              <div>
+                <ngx-json-viewer
+                  [json]="rule.condition"
+                  [depth]="3"
+                ></ngx-json-viewer>
+              </div>
+            </div>
+            <div class="panel-value">
+              Forced Value
+              <mat-slide-toggle
+                class="example-margin"
+                [color]="'blue'"
+                [checked]="rule.force"
+                [disabled]="false"
+              >
+              </mat-slide-toggle>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>

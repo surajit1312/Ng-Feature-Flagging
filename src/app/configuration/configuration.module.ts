@@ -3,6 +3,10 @@ import { CommonModule } from '@angular/common';
 import { ConfigurationComponent } from './configuration.component';
 import { RouterModule, Routes } from '@angular/router';
 
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { NgxJsonViewerModule } from 'ngx-json-viewer';
+
 const routes: Routes = [
   {
     path: '',
@@ -12,6 +16,12 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [ConfigurationComponent],
-  imports: [CommonModule, RouterModule.forChild(routes)],
+  imports: [
+    CommonModule,
+    RouterModule.forChild(routes),
+    MatSlideToggleModule,
+    MatExpansionModule,
+    NgxJsonViewerModule,
+  ],
 })
 export class ConfigurationModule {}

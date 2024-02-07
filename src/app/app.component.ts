@@ -23,11 +23,9 @@ export class AppComponent implements OnInit {
     { text: 'Four', cols: 2, rows: 1, color: '#DDBDF1' },
   ];
 
-  constructor(private appConfig: AppConfigService) {
-    console.log(appConfig.featureFlags);
-  }
+  constructor(private appConfig: AppConfigService) {}
 
   ngOnInit(): void {
-    this.isAdmin = this.appConfig.featureFlags.featureAdmin;
+    this.isAdmin = this.appConfig.isAdmin();
   }
 }

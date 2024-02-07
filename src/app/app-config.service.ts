@@ -1,28 +1,92 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { FeatureDefinition, GrowthBook } from '@growthbook/growthbook';
+
+const API_KEY = 'API_KEY';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AppConfigService {
-  public featureFlags!: {
-    featureAdmin: boolean;
-    featureUserA: boolean;
-    featureUserB: boolean;
-  };
+  private featureFlags: Record<string, FeatureDefinition> = {};
 
-  constructor(private httpClient: HttpClient) {}
+  private growthbook!: GrowthBook;
+  private userConfig!: any;
+
+  constructor() {}
+
+  setUserConfig(userConfig: any) {
+    this.userConfig = userConfig;
+  }
+
+  getUserRole(): string {
+    return this.userConfig.role;
+  }
+
+  setGrowthBook(gb: GrowthBook) {
+    this.growthbook = gb;
+  }
+
+  getGrowthBook(): GrowthBook {
+    return this.growthbook;
+  }
+
+  setFeaturesFlag(features: Record<string, FeatureDefinition>) {
+    this.featureFlags = features;
+  }
+
+  getFeatures(): Record<string, FeatureDefinition> {
+    return this.featureFlags;
+  }
+
+  getFeatureValue(key: string): boolean | any {
+    return this.growthbook.isOn(key);
+  }
+
+  getFeatureAttribute(key: string, attribute: string, value: string): boolean {
+    const filteredFeature = this.featureFlags[key]?.rules?.filter(
+      (rule: any) => {
+        return rule.condition?.[attribute] == value;
+      }
+    );
+    if (filteredFeature && filteredFeature.length > 0) {
+      return filteredFeature[0].force;
+    } else {
+      return false;
+    }
+  }
+
+  private async loadConfig() {
+    const growthbook = new GrowthBook({
+      apiHost: 'https://cdn.growthbook.io',
+      clientKey: API_KEY,
+      enableDevMode: true,
+      subscribeToChanges: true,
+      trackingCallback: (experiment, result) => {
+        // TODO: Use your real analytics tracking system
+        console.log('Viewed Experiment', {
+          experimentId: experiment.key,
+          variationId: result.key,
+        });
+      },
+    });
+
+    // Wait for features to be downloaded
+    await growthbook.loadFeatures();
+    this.setGrowthBook(growthbook);
+    this.setFeaturesFlag(growthbook.getFeatures());
+  }
 
   public async loadRemoteConfiguration(): Promise<void> {
-    let remoteConfig;
+    let remoteConfig: any;
     try {
-      remoteConfig = await this.httpClient
-        .get('assets/api/feature-config.json')
-        .toPromise();
-      Object.assign(this, remoteConfig);
+      remoteConfig = await this.loadConfig();
+      return remoteConfig;
     } catch (error) {
       throw error;
     }
+  }
+
+  public isAdmin(): boolean {
+    return this.getFeatureAttribute('ff-config', 'role', this.getUserRole());
   }
 }
