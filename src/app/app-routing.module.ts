@@ -5,6 +5,7 @@ import { AboutComponent } from './about/about.component';
 import { AppConfigService } from './app-config.service';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { UserDomainService } from './user-domain.service';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -17,15 +18,34 @@ const routes: Routes = [
   exports: [RouterModule],
 })
 export class AppRoutingModule {
-  public static loadRoutes = (appConfig: AppConfigService): Routes => {
+  public static loadRoutes = (
+    userDomainService: UserDomainService,
+    appConfig: AppConfigService
+  ): Routes => {
     const appRoutes: Routes = routes;
-    const userRole = appConfig.getUserRole();
+    const userDomain = userDomainService.getUserDomain();
+    const userRole = userDomainService.getUserRole();
+    const isDomainFeatured = appConfig.getFeatureAttribute(
+      'ff-domain',
+      'domain',
+      userDomain
+    );
     const isAdmin: boolean = appConfig.getFeatureAttribute(
       'ff-config',
       'role',
       userRole
     );
-    if (isAdmin) {
+    if (isDomainFeatured) {
+      if (isAdmin) {
+        appRoutes.push({
+          path: 'configuration',
+          loadChildren: () =>
+            import('./configuration/configuration.module').then(
+              (m) => m.ConfigurationModule
+            ),
+        });
+      }
+    } else {
       appRoutes.push({
         path: 'configuration',
         loadChildren: () =>

@@ -16,6 +16,7 @@ import { AboutComponent } from './about/about.component';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { AppConfigService } from './app-config.service';
 import { ConfigurationModule } from './configuration/configuration.module';
+import { UserDomainService } from './user-domain.service';
 
 @NgModule({
   declarations: [AppComponent, HomeComponent, AboutComponent],
@@ -33,25 +34,26 @@ import { ConfigurationModule } from './configuration/configuration.module';
   providers: [
     {
       provide: APP_INITIALIZER,
-      useFactory: (httpClient: HttpClient, appConfig: AppConfigService) => {
+      useFactory: (
+        userDomainService: UserDomainService,
+        appConfig: AppConfigService
+      ) => {
         const loadAppConfiguration = async (): Promise<void> => {
-          httpClient
-            .get('assets/api/logged-user.json')
-            .subscribe((userConfig) => {
-              appConfig.setUserConfig(userConfig);
-            });
+          userDomainService.getUserDomainRole();
           await appConfig.loadRemoteConfiguration();
         };
         return loadAppConfiguration;
       },
-      deps: [HttpClient, AppConfigService],
+      deps: [UserDomainService, AppConfigService],
       multi: true,
     },
     {
       provide: ROUTES,
-      useFactory: (appConfig: AppConfigService) =>
-        AppRoutingModule.loadRoutes(appConfig),
-      deps: [AppConfigService],
+      useFactory: (
+        userDomainService: UserDomainService,
+        appConfig: AppConfigService
+      ) => AppRoutingModule.loadRoutes(userDomainService, appConfig),
+      deps: [UserDomainService, AppConfigService],
       multi: true,
     },
   ],

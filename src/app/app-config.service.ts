@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FeatureDefinition, GrowthBook } from '@growthbook/growthbook';
+import { UserDomainService } from './user-domain.service';
 
 const API_KEY = 'API_KEY';
 
@@ -10,17 +11,8 @@ export class AppConfigService {
   private featureFlags: Record<string, FeatureDefinition> = {};
 
   private growthbook!: GrowthBook;
-  private userConfig!: any;
 
-  constructor() {}
-
-  setUserConfig(userConfig: any) {
-    this.userConfig = userConfig;
-  }
-
-  getUserRole(): string {
-    return this.userConfig.role;
-  }
+  constructor(private userDomainService: UserDomainService) {}
 
   setGrowthBook(gb: GrowthBook) {
     this.growthbook = gb;
@@ -86,7 +78,21 @@ export class AppConfigService {
     }
   }
 
-  public isAdmin(): boolean {
-    return this.getFeatureAttribute('ff-config', 'role', this.getUserRole());
+  public validateUser(): boolean {
+    const isDomainFeatured = this.getFeatureAttribute(
+      'ff-domain',
+      'domain',
+      this.userDomainService.getUserDomain()
+    );
+    const isAdmin: boolean = this.getFeatureAttribute(
+      'ff-config',
+      'role',
+      this.userDomainService.getUserRole()
+    );
+    if (!isDomainFeatured) {
+      return true;
+    } else {
+      return isAdmin;
+    }
   }
 }

@@ -12,6 +12,6 @@ export class AboutComponent implements OnInit {
   constructor(private appConfig: AppConfigService) {}
 
   ngOnInit(): void {
-    this.isAdmin = this.appConfig.isAdmin();
+    this.isAdmin = this.appConfig.validateUser();
   }
 }
