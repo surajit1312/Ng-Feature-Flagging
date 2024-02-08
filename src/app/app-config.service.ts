@@ -89,10 +89,6 @@ export class AppConfigService {
       'role',
       this.userDomainService.getUserRole()
     );
-    if (!isDomainFeatured) {
-      return true;
-    } else {
-      return isAdmin;
-    }
+    return isDomainFeatured && isAdmin;
   }
 }

@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { AppConfigService } from '../app-config.service';
-import { FeatureDefinition, FeatureRule } from '@growthbook/growthbook';
+import {
+  FeatureDefinition,
+  FeatureRule,
+  GrowthBook,
+} from '@growthbook/growthbook';
 
 export interface IFeature {
   key: string;
@@ -31,5 +35,26 @@ export class ConfigurationComponent implements OnInit {
         rules: value.rules || [],
       });
     }
+  }
+
+  changeAttribute(feature: IFeature, field?: string, rule?: FeatureRule) {
+    console.log(feature, rule);
+    const growthbook: GrowthBook = this.appConfig.getGrowthBook();
+    const features: Record<string, FeatureDefinition> =
+      this.appConfig.getFeatures();
+    if (field === 'defaultValue') {
+      features[feature.key].defaultValue = !features[feature.key].defaultValue;
+    } else {
+      const rules: any = features[feature.key].rules;
+      let index = -1;
+      for (let i = 0; i < rules.length; i++) {
+        if (rules[i].condition == rule?.condition) {
+          index = i;
+          break;
+        }
+      }
+      // features?.[feature.key]?.rules[index].force = !features[feature.key].rules[index].force;
+    }
+    growthbook.setFeatures(features);
   }
 }

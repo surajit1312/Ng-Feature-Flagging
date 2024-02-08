@@ -35,17 +35,7 @@ export class AppRoutingModule {
       'role',
       userRole
     );
-    if (isDomainFeatured) {
-      if (isAdmin) {
-        appRoutes.push({
-          path: 'configuration',
-          loadChildren: () =>
-            import('./configuration/configuration.module').then(
-              (m) => m.ConfigurationModule
-            ),
-        });
-      }
-    } else {
+    if (isDomainFeatured && isAdmin) {
       appRoutes.push({
         path: 'configuration',
         loadChildren: () =>
